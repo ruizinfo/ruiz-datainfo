@@ -1,0 +1,9 @@
+version: '2'
+services:
+  ruiz-fast:
+    image: ruiz/fast
+    ports:
+      - "8081:8081"
+    environment:
+      - spring.profiles.active=dev
+    network_mode: "host"

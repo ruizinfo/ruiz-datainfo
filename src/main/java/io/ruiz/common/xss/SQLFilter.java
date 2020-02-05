@@ -1,0 +1,56 @@
+/**
+ * Copyright (c) 2016-2019 人人开源 All rights reserved.
+ *
+ * https://www.renren.io
+ *
+ * 版权所有，侵权必究！
+ */
+
+package io.ruiz.common.xss;
+
+import io.ruiz.common.exception.RRException;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.stream.Stream;
+
+/**
+ * SQL过滤
+ *
+ * @author Mark sunlightcs@gmail.com
+ */
+public class SQLFilter {
+
+    /**
+     * SQL注入过滤
+     * @param str  待验证的字符串
+     */
+    public static String sqlInject(String str){
+        if(StringUtils.isBlank(str)){
+            return null;
+        }
+        //去掉'|"|;|\字符
+        str = StringUtils.replace(str, "'", "");
+        str = StringUtils.replace(str, "\"", "");
+        str = StringUtils.replace(str, ";", "");
+        str = StringUtils.replace(str, "\\", "");
+
+        //转换成小写
+        str = str.toLowerCase();
+
+        Stream<String> keywords = Stream.of("master", "truncate", "insert", "select", "delete", "update", "declare", "alter", "drop");
+        if (keywords.anyMatch(str::contains)) {
+            throw new RRException("包含非法字符");
+        }
+//        //非法字符
+//        String[] keywords = {"master", "truncate", "insert", "select", "delete", "update", "declare", "alter", "drop"};
+//
+//        //判断是否包含非法字符
+//        for(String keyword : keywords){
+//            if(str.contains(keyword)){
+//                throw new RRException("包含非法字符");
+//            }
+//        }
+
+        return str;
+    }
+}
